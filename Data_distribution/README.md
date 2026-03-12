@@ -79,13 +79,6 @@ The visualization generates an interactive HTML map:
 - **Distribution pattern:** Bird observations are concentrated in multiple hotspots rather than uniformly distributed
 - **Method effectiveness:** Grid-based aggregation successfully reveals geographic patterns while managing computational performance
 
-## How to Use
-
-1. Run the Jupyter notebook `data_distribution_visualization.ipynb`
-2. The script automatically generates `bird_density_map.html`
-3. Open the HTML file in a web browser to explore the interactive map
-4. Use map controls to zoom, pan, and click markers for detailed information
-
 ---
 
 **Project:** Bird Diversity Analysis  
