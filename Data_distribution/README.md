@@ -36,7 +36,7 @@ This module visualizes the geographic distribution of bird observation data acro
 
 ## Data Coverage Across Sri Lanka
 
-![Bird Density Map - Sri Lanka Coverage](bird_density_map.png)
+![Bird Density Map - Sri Lanka Coverage](sri_lankan_map.png)
 
 **Geographic Coverage:** The data points shown on the map demonstrate comprehensive coverage across Sri Lanka:
 - **Northern regions** - Including Jaffna and the Vanni area
