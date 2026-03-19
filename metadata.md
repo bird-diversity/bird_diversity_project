@@ -23,3 +23,115 @@ Below are the main climate features included, their descriptions, and units:
 ## Usage
 
 These features are used to analyze the impact of climate variables on bird diversity. For more details and additional features, refer to the [NASA POWER API Documentation](https://power.larc.nasa.gov/docs/services/api/).
+
+# Vegetation Index Data Metadata
+
+## Data Source
+
+The vegetation and quality assurance data used in this project is obtained from NASA's MODIS (Moderate Resolution Imaging Spectroradiometer) satellite products:
+
+[NASA LP DAAC MODIS MOD13Q1 Documentation](https://lpdaac.usgs.gov/products/mod13q1v061/)
+
+## Features, Metadata, and Interpretation
+
+Below are the vegetation and cloud coverage features included, their descriptions, and how to interpret their values:
+
+| Feature          | Description                                                      | Unit                 |
+|------------------|------------------------------------------------------------------|----------------------|
+| NDVI_raw         | Raw Normalized Difference Vegetation Index (scaled for storage)  | Dimensionless (-10000 to +10000) |
+| NDVI             | True calculated vegetation greenness (NDVI_raw / 10000)          | Dimensionless (-1.0 to 1.0) |
+
+### Value Interpretation Guide
+
+**1. True NDVI (Vegetation Greenness)**
+* **< 0.0:** Deep water bodies, oceans, or severe cloud interference.
+* **0.0 to 0.1:** Barren areas of rock, sand, snow, or dense concrete (Urban cores).
+* **0.2 to 0.4:** Sparse vegetation, dry scrublands, or bare soil.
+* **0.5 to 0.7:** Moderate vegetation, active agricultural croplands, or mixed forests.
+* **0.8 to 1.0:** Dense, healthy, wet canopy vegetation (e.g., Evergreen Rainforests).
+
+---
+
+# Land Cover Data Metadata
+
+## Data Source
+
+The land cover classification data is obtained from NASA's MODIS annual land cover product:
+
+[NASA LP DAAC MODIS MCD12Q1 Documentation](https://lpdaac.usgs.gov/products/mcd12q1v061/)
+
+## Features and Metadata
+
+| Feature          | Description                                                      | Unit                 |
+|------------------|------------------------------------------------------------------|----------------------|
+| LandCover_Class  | IGBP global vegetation classification                            | Categorical (1 to 17) |
+
+### Value Interpretation Guide (IGBP Land Cover Classes)
+
+| Class Code | Habitat Name | Ecological Description |
+| :--- | :--- | :--- |
+| **1** | **Evergreen Needleleaf Forests** | Dominated by evergreen conifer trees (canopy >2m). Tree cover >60%. |
+| **2** | **Evergreen Broadleaf Forests** | Dominated by evergreen broadleaf trees (Rainforests). Tree cover >60%. |
+| **3** | **Deciduous Needleleaf Forests** | Dominated by deciduous needleleaf (larch) trees. Tree cover >60%. |
+| **4** | **Deciduous Broadleaf Forests** | Dominated by deciduous broadleaf trees. Tree cover >60%. |
+| **5** | **Mixed Forests** | Dominated by neither deciduous nor evergreen (40-60% of each). |
+| **6** | **Closed Shrublands** | Dominated by woody perennials (1-2m height). >60% cover. |
+| **7** | **Open Shrublands** | Dominated by woody perennials (1-2m height). 10-60% cover. |
+| **8** | **Woody Savannas** | Tree cover 30-60% (canopy >2m) mixed with grassy understory. |
+| **9** | **Savannas** | Tree cover 10-30% (canopy >2m) mixed with grassy understory. |
+| **10** | **Grasslands** | Dominated by herbaceous annuals (<2m). |
+| **11** | **Permanent Wetlands** | Permanently inundated lands with 30-60% water cover and >10% vegetation. |
+| **12** | **Cropland** | Land heavily cultivated for agriculture. |
+| **13** | **Urban and Built-up Lands** | At least 30% impervious surface area (buildings, asphalt, concrete). |
+| **14** | **Cropland / Natural Mosaics** | Mosaics of small-scale cultivation (40-60%) mixed with natural vegetation. |
+| **15** | **Permanent Snow and Ice** | At least 60% of area is covered by snow and ice for >10 months. |
+| **16** | **Barren** | Sand, rock, or soil areas with less than 10% vegetation. |
+| **17** | **Water Bodies** | At least 60% of area is covered by permanent open water. |
+
+---
+
+# Nighttime Lights Data Metadata
+
+## Data Source
+
+The nighttime lights data is obtained from the Earth Observation Group (EOG) using the Suomi NPP VIIRS Day/Night Band:
+
+[VIIRS Nighttime Lights Documentation](https://eogdata.mines.edu/products/vnl/)
+
+## Features and Metadata
+
+| Feature          | Description                                                      | Unit                 |
+|------------------|------------------------------------------------------------------|----------------------|
+| avg_rad          | Average Radiance representing nighttime artificial lights        | nW/cm²/sr            |
+| cf_cvg           | Cloud-Free Coverage (Quality Assurance metric)                   | Count                |
+
+### Value Interpretation Guide
+
+* **~0.0:** Pitch-black wilderness, deep jungles, or remote national parks (e.g., Sinharaja, Yala).
+* **Low Positive Numbers (e.g., 0.5 - 3.0):** Rural villages, isolated road networks, or low-density agricultural housing.
+* **High Spikes (e.g., 10.0 - 50.0+):** Dense urban centers, major cities, commercial districts, and industrial zones (e.g., Colombo, Gampaha). Serves as a direct mathematical proxy for noise, concrete, and human disturbance.
+
+### cf_cvg (Cloud-Free Coverage)
+* **0:** The satellite had zero clear views of the ground due to cloud cover. The environmental data for this row is blind/interpolated and should generally be filtered out.
+* **1 or higher:** The satellite had at least one clear, unobstructed view of the ground. The data is valid.
+---
+
+# Elevation Data Metadata
+
+## Data Source
+
+The topographic elevation data is obtained from the NASA Shuttle Radar Topography Mission (SRTM):
+
+[NASA SRTM Documentation](https://www2.jpl.nasa.gov/srtm/)
+
+## Features and Metadata
+
+| Feature          | Description                                                      | Unit                 |
+|------------------|------------------------------------------------------------------|----------------------|
+| elevation_meters | Topographic elevation above sea level                            | Meters (m)           |
+
+### Value Interpretation Guide (Altitudinal Zonation in Sri Lanka)
+
+* **0m to 100m (Coastal Lowlands):** Extremely hot, flat plains where the majority of urban development, agriculture, and generalist bird species exist.
+* **100m to 1000m (Mid-Country / Sub-Montane):** Transitional zones featuring rolling hills, moderate temperatures, and diverse forest types.
+* **>1000m (Central Highlands / Montane):** Cold, steep mountainous regions (e.g., Nuwara Eliya, Horton Plains). Characterized by high environmental lapse rates (dropping temperatures) and highly specific endemic bird species.
