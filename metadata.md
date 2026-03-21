@@ -128,7 +128,7 @@ The nighttime lights data is obtained from the Earth Observation Group (EOG) usi
 
 The topographic elevation data is obtained from the NASA Shuttle Radar Topography Mission (SRTM):
 
-[NASA SRTM Documentation](https://www2.jpl.nasa.gov/srtm/)
+[NASA SRTM Documentation](https://www.earthdata.nasa.gov/data/catalog/lpcloud-srtmgl1-003)
 
 ## Features and Metadata
 
