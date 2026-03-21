@@ -1,3 +1,23 @@
+# Bird Observation & Location Data Metadata
+
+## Data Source
+
+The bird observation and geographic location data used in this project is obtained from the GBIF dataset:
+
+[GBIF Dataset: Temporal Coverages](https://www.gbif.org/dataset/4fa7b334-ce0d-4e88-aaae-2e0c138d049e#temporalCoverages)
+
+## Features and Metadata
+
+Below are the main bird observation and location features included, their descriptions, and units:
+
+| Feature          | Description                                                        | Unit                 |
+|------------------|--------------------------------------------------------------------|----------------------|
+| individualCount  | The number of individual birds recorded during the observation event. | Count             |
+| decimalLatitude  | The geographic latitude of the observation location in decimal degrees. | Decimal degrees  |
+| decimalLongitude | The geographic longitude of the observation location in decimal degrees. | Decimal degrees |
+
+---
+
 # Climate Data Metadata
 
 ## Data Source
