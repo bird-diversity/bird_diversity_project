@@ -18,8 +18,6 @@ This document provides a detailed description of the columns included in the `fi
 
 ## 4. Weather & Climate (Meteorological Data)
 *   **`temp_mean`**: Average temperature over the observation time period (typically in degrees Celsius).
-*   **`temp_max`**: Maximum temperature recorded during the period.
-*   **`temp_min`**: Minimum temperature recorded during the period.
 *   **`humid_mean`**: Average relative humidity percentage.
 *   **`wind_mean`**: Average wind speed at the given spatial and temporal resolution.
 *   **`rainfall`**: Accumulated precipitation roughly matching the time period of the observation or aggregate grid.
