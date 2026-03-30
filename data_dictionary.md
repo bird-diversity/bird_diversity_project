@@ -1,36 +1,34 @@
 # Data Dictionary for Bird Diversity & Environmental Factors (final5.csv)
 
-This document provides a detailed description of the columns included in the `final5.csv` dataset, which integrates bird observation data with weather, vegetation, terrain, light pollution, and air quality metrics.
+This document explains the dataset columns used in the bird diversity analysis. The list below follows the exact column order requested.
 
-## 1. Bird Observation & Location Details
-*   **`individualCount`**: The number of individual birds recorded during the specific observation event.
-*   **`decimalLatitude`**: The geographic latitude of the observation location in decimal degrees.
-*   **`decimalLongitude`**: The geographic longitude of the observation location in decimal degrees.
+## Column Definitions (in dataset order)
 
-## 2. Geography & Vegetation
-*   **`elevation_meters`**: The elevation of the observation location above sea level, measured in meters.
-*   **`LandCover_Class`**: A categorical identifier representing the dominant land cover classification at the observation site (e.g., forest, urban, agricultural, water).
-*   **`NDVI_raw`**: Normalized Difference Vegetation Index. A metric quantifying vegetation greenness and density using satellite sensor data. Higher values indicate denser, healthier vegetation.
+* **`index`**: Row identifier for each record in the integrated dataset. Usually used as a technical index, not an environmental variable.
+* **`verbatimScientificName`**: Scientific species name recorded in the source observation (as originally reported).
+* **`stateProvince`**: Administrative region where the observation was made (state/province field from occurrence metadata).
+* **`individualCount`**: Number of individual birds observed in that event.
+* **`decimalLatitude`**: Observation latitude in decimal degrees (WGS84).
+* **`decimalLongitude`**: Observation longitude in decimal degrees (WGS84).
+* **`eventDate`**: Date of the bird observation event.
+* **`avg_rad`**: Average nighttime radiance (VIIRS ALAN), used as a proxy for artificial light pollution.
+* **`NDVI_raw`**: Raw Normalized Difference Vegetation Index value representing vegetation greenness.
+* **`LandCover_Class`**: Land cover category at the observation location (e.g., forest, urban, cropland, water).
+* **`elevation_meters`**: Elevation of the location above sea level in meters.
+* **`Carbon_Mass`**: Surface black carbon mass concentration (a combustion-related aerosol component).
+* **`Dust_Mass`**: Surface dust aerosol mass concentration.
+* **`SO2_Mass`**: Surface sulfur dioxide-related mass indicator from the atmospheric product.
+* **`Sulfate_Mass`**: Surface sulfate aerosol mass concentration.
+* **`Sea_Salt_Mass`**: Surface sea-salt aerosol mass concentration.
+* **`Total_Aerosol_Extinction`**: Total aerosol extinction optical thickness (AOD-like indicator of aerosol loading in the atmosphere).
+* **`temp_mean`**: Mean air temperature for the matched time period/location.
+* **`rainfall`**: Accumulated precipitation for the matched time period/location.
+* **`wind_mean`**: Mean wind speed for the matched time period/location.
+* **`humid_mean`**: Mean relative humidity for the matched time period/location.
+* **`shortwave_radiation`**: Downward shortwave solar radiation at surface level.
 
-## 3. Light Pollution (VIIRS ALAN - Artificial Light At Night)
-*   **`avg_rad`**: Average Radiance. Represents the intensity of artificial nighttime lights. Higher values indicate higher levels of light pollution in the area.
-*   **`cf_cvg`**: Cloud-Free Coverage. The number of cloud-free observations used to compute the average radiance, indicating the reliability of the light pollution measurement.
+## Notes
 
-## 4. Weather & Climate (Meteorological Data)
-*   **`temp_mean`**: Average temperature over the observation time period (typically in degrees Celsius).
-*   **`humid_mean`**: Average relative humidity percentage.
-*   **`wind_mean`**: Average wind speed at the given spatial and temporal resolution.
-*   **`rainfall`**: Accumulated precipitation roughly matching the time period of the observation or aggregate grid.
-*   **`shortwave_radiation`**: Downward shortwave solar radiation reaching the surface; an indicator of daylight intensity/cloud cover during the day.
-
-## 5. Air Pollution & Aerosols (MERRA-2 Data)
-These variables come from NASA's MERRA-2 (Modern-Era Retrospective analysis for Research and Applications) Atmospheric Aerosol profile datastores (`tavgM_2d_aer_Nx`).
-*   **`Carbon_Mass`**: Black Carbon Surface Mass Concentration. Tracks fine particulate matter resulting from incomplete combustion.
-*   **`Dust_Mass`**: Dust Surface Mass Concentration. Total dust aerosol mass.
-*   **`SO2_Mass`**: Sulfur Dioxide Surface Mass Concentration. A pollutant gas primarily from volcanic and industrial activity.
-*   **`Sulfate_Mass`**: Sulfate Surface Mass Concentration. Aerosol particles formed from sulfur dioxide oxidation.
-*   **`Sea_Salt_Mass`**: Sea Salt Surface Mass Concentration. Airborne salt particles generated by wind over oceans.
-*   **`Total_Aerosol_Extinction`**: Total Aerosol Extinction Optical Thickness (AOD - Aerosol Optical Depth). A comprehensive measure of how much total sunlight is prevented from reaching the ground by all aerosol types.
-
-## 6. Other Indicators
-*   **`lka_general_2020`**: A Sri Lanka-specific geographic/demographic indicator (e.g., population density raster, human footprint index, or specific regional identifier mapped to the year 2020).
+* Air pollution and aerosol fields are integrated from gridded atmospheric products (MERRA-2 family variables in your pipeline).
+* Climate fields (`temp_mean`, `rainfall`, `wind_mean`, `humid_mean`, `shortwave_radiation`) come from weather/climate data integration.
+* `individualCount` is count data and often right-skewed; transformations or count models may be useful during analysis.
