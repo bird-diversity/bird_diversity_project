@@ -1,0 +1,15 @@
+{
+    "created": "2019-06-21T02:09:55.493007",
+    "description": "",
+    "format": "zip",
+    "download_url": "https://data.humdata.org/dataset/9950abe7-6717-4cfb-97fc-36faa04ad6b8/resource/7e7a8e64-0a00-4084-a472-2830fea2d016/download/lka_general_2020_csv.zip",
+    "id": "7e7a8e64-0a00-4084-a472-2830fea2d016",
+    "last_modified": "2023-03-10T03:31:52.199706",
+    "metadata_modified": "2023-03-10T03:31:55.156682",
+    "microdata": false,
+    "dataset_id": "9950abe7-6717-4cfb-97fc-36faa04ad6b8",
+    "resource_type": null,
+    "name": "lka_general_2020_csv.zip",
+    "mimetype": "application/zip",
+    "size": "19.7M"
+}
