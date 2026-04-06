@@ -1,0 +1,85 @@
+Conclusion — richness, environment, dominance, and trends analysis
+================================================================
+(File: richness_env_dominance_trends_analysis.ipynb)
+
+Note: Exact p-values and coefficient signs for the GLM below match the notebook output
+saved when this text was written. If you re-run the notebook on new data, update the
+conclusion to match the new tables.
+
+What this notebook does (in plain English)
+------------------------------------------
+• Bird records were cleaned and linked to environmental data (vegetation, land cover, light, climate, 
+elevation, aerosols, etc.).
+
+• To avoid counting the same place many times, the data were “thinned”: within each state and each 5 km 
+grid cell, we kept one record per species. That gives a fairer picture of how many species appear in each 
+area without duplicate visits dominating the numbers.
+
+• For each grid cell we calculated species richness (how many bird species) and average environmental values. 
+Land cover was summarized as the most common land cover class in that cell. NDVI (greenness) was always 
+considered together with land cover, because the same NDVI number can mean different things in forest, crop, 
+or built-up areas.
+
+• We compared richness across states, looked at how richness relates to the environment within each state and 
+overall, fitted a statistical model (Poisson regression) for richness, measured how “uneven” bird communities 
+are in each state (dominance), and looked at simple long-term trends in yearly counts for common species.
+
+
+Main results from the overall richness model (Poisson GLM)
+----------------------------------------------------------
+These results are from the model that predicts species richness per grid cell using NDVI, land cover type, night 
+light (avg_rad), elevation, temperature, rainfall, and aerosol extinction — on about 1,700 grid cells after 
+dropping rare land cover classes.
+
+• NDVI: After accounting for land cover and the other variables, higher NDVI is associated with slightly lower 
+expected richness in this model (negative coefficient; statistically significant at the usual 5% level in the 
+saved run). This should be read carefully: NDVI is not “bad for birds” by itself; it interacts with habitat type, 
+and the model is associational, not proof of cause.
+
+• Night-time radiance (avg_rad): Higher values are associated with higher richness in this model (positive 
+coefficient; statistically significant). This often tracks human activity and sampling — more people reporting 
+birds in brighter areas — so it is partly an effort effect, not only ecology.
+
+• Temperature (temp_mean): Higher temperature is associated with lower expected richness in this model (negative 
+coefficient; statistically significant).
+
+• Elevation, rainfall, and total aerosol extinction: In this fitted model they were not clearly different from 
+zero (not statistically significant in the saved output). That does not prove they “don’t matter”; they may be 
+correlated with other variables or vary too little in the sample.
+
+• Land cover: Several land cover classes differ from the reference class in the model (some negative associations 
+were significant in the saved run). The numeric codes should be mapped back to your land cover legend when you 
+write them up.
+
+• The model fit is reasonably strong for a descriptive Poisson model (high pseudo R-squared in the saved output), 
+but it describes patterns in the data — it does not prove that changing one factor would change bird richness.
+
+
+Other parts of the notebook (short summary)
+-------------------------------------------
+• Richness by state: States differ in both average richness per cell and total number of species recorded. 
+Maps and bars show where diversity is higher or lower under the thinning rules used here.
+
+• Within-state environment: Correlations between richness and environment can differ from one state to another. 
+That means a relationship seen for the whole country is not always the same in every region.
+
+• Dominance: Some states have bird communities dominated by a few very common species; others are more even. 
+Berger–Parker, Simpson, Shannon, and Pielou metrics summarize that.
+
+• Trends in counts over years: For species with enough years of data, we fitted simple trends in log(total 
+count per year). These trends mix real change with more reporting and more eBird (or similar) use over time. 
+Treat them as exploratory, not as firm population estimates.
+
+
+Important limitations (keep these in any paper or report)
+---------------------------------------------------------
+• Counts and lists reflect where and when people looked for birds, not a complete census.
+
+• “Correlation” and regression here show association, not causation.
+
+• Yearly trends are confounded with survey effort and technology.
+
+• NDVI must be interpreted with land cover; the notebook’s figures and model are built that way on purpose.
+
+
+End of summary.
