@@ -1,75 +1,3 @@
----
-license: cc-by-4.0
-task_categories:
-  - tabular-classification
-  - other
-language:
-  - en
-tags:
-  - biology
-  - ecology
-  - birds
-  - sri-lanka
-  - biodiversity
-  - species-distribution-modeling
-  - environmental-variables
-  - citizen-science
-  - remote-sensing
-size_categories:
-  - 1M<n<10M
-pretty_name: Sri Lanka Bird Diversity Dataset
-dataset_info:
-  features:
-    - name: index
-      dtype: int64
-    - name: verbatimScientificName
-      dtype: string
-    - name: stateProvince
-      dtype: string
-    - name: individualCount
-      dtype: float64
-    - name: decimalLatitude
-      dtype: float64
-    - name: decimalLongitude
-      dtype: float64
-    - name: eventDate
-      dtype: string
-    - name: avg_rad
-      dtype: float64
-    - name: NDVI_raw
-      dtype: float64
-    - name: LandCover_Class
-      dtype: int64
-    - name: elevation_meters
-      dtype: int64
-    - name: Carbon_Mass
-      dtype: float64
-    - name: Dust_Mass
-      dtype: float64
-    - name: SO2_Mass
-      dtype: float64
-    - name: Sulfate_Mass
-      dtype: float64
-    - name: Sea_Salt_Mass
-      dtype: float64
-    - name: Total_Aerosol_Extinction
-      dtype: float64
-    - name: temp_mean
-      dtype: float64
-    - name: rainfall
-      dtype: float64
-    - name: wind_mean
-      dtype: float64
-    - name: humid_mean
-      dtype: float64
-    - name: shortwave_radiation
-      dtype: float64
-    - name: lka_general_2020
-      dtype: float64
-    - name: NDVI
-      dtype: float64
----
-
 # Sri Lanka Bird Diversity Dataset
 
 Companion dataset for the paper **["How Environment and Urbanization Shape Bird Diversity in Sri Lanka"](paper_overleaf.tex)**.
@@ -193,62 +121,6 @@ For analyses mirroring the paper:
 
 See `stateProvince/stateprovince_species_spatial_thinning_analysis.ipynb` and related notebooks.
 
-## Usage
-
-### Load from Hugging Face
-
-```python
-from datasets import load_dataset
-
-ds = load_dataset("DilushaChandrasiri/SriLanka-Bird-Diversity-Dataset", split="train")
-print(ds)
-print(ds[0])
-```
-
-### Load with Pandas
-
-```python
-import pandas as pd
-
-df = pd.read_csv("SriLanka-Bird-Diversity-Dataset.csv")
-print(f"Records: {len(df):,} | Species: {df['verbatimScientificName'].nunique()}")
-df["eventDate"] = pd.to_datetime(df["eventDate"])
-print(df.head())
-```
-
-### Species richness by land cover
-
-```python
-import pandas as pd
-
-df = pd.read_csv("SriLanka-Bird-Diversity-Dataset.csv")
-richness_by_cover = (
-    df.groupby("LandCover_Class")["verbatimScientificName"]
-    .nunique()
-    .sort_values(ascending=False)
-)
-print(richness_by_cover)
-```
-
-### Poisson GLM (cell-level, after thinning & aggregation)
-
-```python
-import pandas as pd
-import statsmodels.api as sm
-import statsmodels.formula.api as smf
-
-# Expect a pre-aggregated grid-cell table (see repo notebooks)
-cells = pd.read_csv("thinned_5km_cell_summary.csv")  # produced by analysis pipeline
-
-model = smf.glm(
-    "species_richness ~ NDVI + avg_rad + temp_mean + C(LandCover_Class)",
-    data=cells,
-    family=sm.families.Poisson(),
-)
-result = model.fit(cov_type="HC1")  # robust SEs as in the paper
-print(result.summary())
-```
-
 ### Intended use cases
 
 | Task | Target | Suggested features |
@@ -258,21 +130,6 @@ print(result.summary())
 | Habitat association analysis | Richness or counts | `LandCover_Class`, NDVI, elevation |
 | Urbanization impact | Community metrics | `avg_rad`, aerosol variables |
 | Temporal trend analysis | Yearly richness | Effort-corrected grid metrics (see repo) |
-
-## Repository Structure
-
-```
-bird_diversity_project/
-├── 01_data_collection/     # Raw source integration (GBIF, MODIS, VIIRS, MERRA-2, POWER, population)
-├── 02_data_preprocessing/  # Cleaning, merging, final dataset construction
-├── 03_data_analysis/       # Exploratory and bivariate analyses
-├── 04_time_series_analysis/# Temporal NDVI, climate, ALAN, diversity trends
-├── stateProvince/          # District-level thinning, GLMs, beta diversity, temporal metrics
-├── EDA/                    # Relationship exploration
-├── data_dictionary.md      # Column definitions
-├── metadata.md             # Per-source feature documentation
-└── paper_overleaf.tex      # LaTeX manuscript
-```
 
 ## Authors
 
@@ -285,29 +142,5 @@ Dept. of Computer Science & Engineering, University of Moratuwa, Sri Lanka
 This dataset is released under the **[Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)** license.
 
 You are free to share and adapt the material for any purpose, provided you give appropriate credit and indicate if changes were made.
-
-## Citation
-
-If you use this dataset or code, please cite:
-
-```bibtex
-@misc{chandrasir2026sri_lanka_bird_diversity,
-  title        = {Sri Lanka Bird Diversity Dataset with Environmental, Climate, and Anthropogenic Features},
-  author       = {Chandrasiri, Dilusha and Herath, Maneesha and Hewarathna, Yasith and Herath, Muditha and Bandara, Gishan and Mendis, Madara and Athukorala, Nathali and de Silva, Nisansa and Wickramanayake, Sandareka},
-  year         = {2026},
-  publisher    = {Hugging Face},
-  howpublished = {\url{https://huggingface.co/datasets/DilushaChandrasiri/SriLanka-Bird-Diversity-Dataset}},
-  license      = {CC-BY-4.0}
-}
-```
-
-```bibtex
-@inproceedings{chandrasir2026environment_urbanization_birds,
-  title     = {How Environment and Urbanization Shape Bird Diversity in Sri Lanka},
-  author    = {Chandrasiri, Dilusha and Herath, Maneesha and Hewarathna, Yasith and Herath, Muditha and Bandara, Gishan and Mendis, Madara and Athukorala, Nathali and de Silva, Nisansa and Wickramanayake, Sandareka},
-  year      = {2026},
-  note      = {Dept. of Computer Science \& Engineering, University of Moratuwa, Sri Lanka}
-}
-```
 
 Please also acknowledge the underlying data providers: **GBIF**, **eBird**, **NASA** (MODIS, MERRA-2, POWER, SRTM), **EOG/VIIRS**, and **HDX/WorldPop**.
