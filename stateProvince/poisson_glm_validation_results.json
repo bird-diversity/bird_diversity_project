@@ -1,0 +1,29 @@
+{
+  "data_path": "/home/dilusha/Downloads/SriLanka-Bird-Diversity-Dataset.csv",
+  "formula": "species_richness ~ NDVI + C(LandCover_mode) + avg_rad + elevation_meters + temp_mean + rainfall + Total_Aerosol_Extinction",
+  "n_cells_total": 1736,
+  "n_train": 1388,
+  "n_test": 348,
+  "train_fraction": 0.8,
+  "test_fraction": 0.2,
+  "random_seed": 42,
+  "train_metrics": {
+    "MAE": 36.08492066993123,
+    "RMSE": 45.817625165207694,
+    "Poisson_deviance": 51492.21493470663,
+    "Pearson_r": 0.18672255440790445,
+    "Spearman_r": 0.18992915023755436,
+    "n": 1388
+  },
+  "test_metrics": {
+    "MAE": 36.69464931187426,
+    "RMSE": 46.79451900296494,
+    "Poisson_deviance": 13133.264101898372,
+    "Pearson_r": 0.20279840335696797,
+    "Spearman_r": 0.20150143785843588,
+    "n": 348
+  },
+  "cox_snell_train": 0.7798769012311235,
+  "cox_snell_full_insample": 0.8035152259465266,
+  "deviance_pseudo_r2_test": 0.041773619784539084
+}
