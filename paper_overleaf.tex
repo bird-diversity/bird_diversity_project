@@ -1,287 +1,236 @@
 \documentclass[conference]{IEEEtran}
 
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath,amssymb}
+%\usepackage{cite}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{url}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{graphicx}  
+\usepackage{float}      
 \usepackage{hyperref}
-\usepackage{caption}
-
-\title{Assessing the Impact of Environmental and Anthropogenic Factors on Bird Diversity Using Integrated Satellite, Climate, and Air Pollution Data}
-
-\author{%
-\IEEEauthorblockN{Author Name(s)}
-\IEEEauthorblockA{Institution Name \\
-City, Country \\
-email@domain.com}
+\hypersetup{
+    colorlinks   = true,
+    citecolor    = blue,
+    urlcolor    =  blue
 }
 
+\newcommand{\hf}[2]{\raisebox{-2.2pt}{\includegraphics[scale=0.09]{images/huggingface.png}}~\href{#1}{\texttt{#2}}}
+
+\newcommand{\gh}[2]{\raisebox{-2.2pt}{\includegraphics[scale=0.02]{images/github.png}}~\href{#1}{\texttt{#2}}}
+
 \begin{document}
+% Group 09
+\title{How Environment and Urbanization Shape Bird Diversity in Sri Lanka}
+
+\author{
+\IEEEauthorblockN{%
+Dilusha Chandrasiri,
+Maneesha Herath,
+Yasith Hewarathna,
+Muditha Herath,
+Gishan Bandara,\\
+Madara Mendis,
+Nathali Athukorala,
+Nisansa de Silva,
+Sandareka Wickramanayake}
+\IEEEauthorblockA{Dept.\ of Computer Science \& Engineering, University of Moratuwa, Sri Lanka.\\
+\texttt{\{dilushac.23, maneeshah.23, yasithh.23, mudithah.23, gishanb.23,}\\
+\texttt{madara.21, nathalia, NisansaDds, sandarekaw\}@cse.mrt.ac.lk}
+}
+}  
+
+
 \maketitle
 
 \begin{abstract}
-This study presents a comprehensive analysis of bird diversity across Sri Lanka by integrating spatial, temporal, and environmental data. Bird observation records were combined with environmental variables including weather conditions, air pollution, vegetation indices (NDVI), land cover, elevation, and artificial light at night (ALAN), and rigorously preprocessed to ensure data quality. Spatial analyses were conducted at multiple grid scales (2 km, 5 km, 10 km) to evaluate patterns in species richness while minimizing sampling bias through spatial thinning. Temporal trends were assessed using effort-corrected metrics including rarefied richness and occupancy rates to account for variations in observation effort over time.
+This study presents a comprehensive analysis of bird diversity across Sri Lanka by integrating spatial, temporal, and environmental data. Bird observation records were combined with environmental variables, including weather conditions, air pollution, the Normalized Difference Vegetation Index (NDVI), land cover, elevation, and Artificial Light At Night (ALAN), and rigorously preprocessed to ensure data quality. Spatial analyses were conducted on multiple grid scales (2 km, 5 km, 10 km) to evaluate patterns in species richness while minimizing sampling bias through spatial thinning. Temporal trends were assessed using effort-corrected metrics including rarefied richness and occupancy rates to account for variations in observation effort over time. Environmental drivers of bird diversity were examined using multivariate statistical models, including Poisson Generalized Linear Models (GLMs) and correlation analyses, to identify key associations between ecological factors and species richness. Additionally, community structure, dominance patterns, and beta diversity were analyzed to understand variations in species composition across regions and time. The study found that land-cover type is a stronger predictor of bird diversity than individual continuous variables such as NDVI or temperature alone. Urbanization, measured by ALAN, exhibits nuanced scale-dependent effects, supporting high abundances of a few generalist species while reducing overall richness. The findings provide actionable insights into the patterns and drivers of avian diversity in Sri Lanka, offering a scalable and reproducible framework for biodiversity research and conservation planning. 
 
-Environmental drivers of bird diversity were examined using multivariate statistical models, including Poisson GLMs and correlation analyses, to identify key associations between ecological factors and species richness. Additionally, community structure, dominance patterns, and beta diversity were analyzed to understand variations in species composition across regions and time. The study found that land-cover type is a stronger predictor of bird diversity than individual continuous variables such as NDVI or temperature alone. Urbanization, measured by ALAN, exhibits nuanced scale-dependent effects, supporting high abundances of a few generalist species while reducing overall richness. The findings provide actionable insights into the patterns and drivers of avian diversity in Sri Lanka, offering a scalable and reproducible framework for biodiversity research and conservation planning.
 \end{abstract}
 
+
 \begin{IEEEkeywords}
-bird diversity, species richness, Sri Lanka, spatial analysis, NDVI, air pollution, artificial light at night (ALAN), Poisson GLM
+bird diversity, species richness, spatial analysis, habitat structure, air pollution, artificial light at night
 \end{IEEEkeywords}
 
 \section{Introduction}
-Understanding how environmental and anthropogenic factors shape biodiversity is a central challenge in ecology, particularly in regions undergoing rapid land-use change. Birds are widely recognized as effective bioindicators due to their sensitivity to habitat structure, climate variability, and human disturbance. Sri Lanka presents a compelling case study, combining high ecological heterogeneity within a small geographic extent with increasing pressures from urbanization, agriculture, and climate variability \cite{hunt2023}. However, comprehensive, spatially explicit assessments of bird diversity at the national scale remain limited.
+Understanding how environmental and anthropogenic factors shape biodiversity is a central challenge in ecology, particularly in regions undergoing rapid land-use change \cite{ref20}. Birds are widely recognized as effective bioindicators due to their sensitivity to habitat structure, climate variability, and human disturbance \cite{ref21}. Sri Lanka presents a compelling case study, combining high ecological heterogeneity within a small geographic extent with increasing pressures from urbanization, agriculture, and climate variability \cite{ref1}. However, comprehensive, spatially explicit assessments of bird diversity at the national scale remain limited. 
 
-Recent advances in remote sensing and open-access biodiversity data provide new opportunities to address this gap. Satellite-derived indicators such as vegetation indices (NDVI), land-cover classifications, and nighttime lights enable consistent, large-scale characterization of ecological conditions, while citizen-science platforms such as eBird offer extensive species occurrence records \cite{sullivan2014}. Although these data sources have been used independently or in limited combinations, there remains a lack of integrated analyses that jointly evaluate climatic, ecological, and anthropogenic drivers of bird diversity within a unified framework, particularly in tropical island systems like Sri Lanka.
-
-Existing studies often emphasize continuous environmental variables such as NDVI or temperature as predictors of species richness, yet emerging evidence suggests that categorical habitat structure and human-driven factors may play a more dominant role \cite{pettorelli2005,donald2001}. Additionally, anthropogenic influences such as artificial light at night (ALAN) are increasingly recognized as drivers of ecological change, but their effects on diversity patterns, especially in terms of community composition and homogenization, remain underexplored at multiple spatial scales. This study addresses:
+Recent advances in remote sensing and open-access biodiversity data provide new opportunities to address this gap. Satellite-derived indicators such as vegetation indices (NDVI), land-cover classifications and nighttime lights enable a consistent, large-scale characterization of ecological conditions, while citizen-science platforms such as eBird offer extensive species occurrence records \cite{ref5,ref9}. Although these data sources have been used independently or in limited combinations, there remains a lack of integrated analyzes that jointly evaluate the climatic, ecological and anthropogenic drivers of bird diversity within a unified framework, particularly in tropical island systems such as Sri Lanka.
+Existing studies often emphasize continuous environmental variables such as NDVI or temperature as predictors of species richness, yet emerging evidence suggests that categorical habitat structure and human-driven factors may play a more dominant role \cite{ref4,ref10}. Additionally, anthropogenic influences such as artificial light at night (ALAN) are increasingly recognized as drivers of ecological change, but their effects on diversity patterns, especially in terms of community composition and homogenization, remain underexplored at multiple spatial scales. This study addresses: 
+ 
 \begin{itemize}
     \item Do categorical habitat variables explain bird species richness more effectively than continuous environmental variables such as NDVI and climate factors?
-    \item Is artificial light at night, as a proxy for urbanization, associated with reduced diversity and increased biotic homogenization?
-    \item Are observed patterns of bird diversity and environmental associations consistent across multiple spatial resolutions (2 km, 5 km, 10 km grids)?
+    \item Is artificial light at night, as a proxy for urbanization, associated with reduced diversity and increased biotic homogenization? 
+    \item Are observed patterns of bird diversity and environmental associations consistent across multiple spatial resolutions (2 km, 5 km, 10 km grids)? 
 \end{itemize}
+This study presents an integrated, multi-source analytical framework, which combines satellite-derived environmental indicators, climate reanalysis data, air pollution metrics, and large-scale citizen-science observations into a single harmonized dataset. Unlike previous studies that focus on isolated variables or single-scale analyses, this research simultaneously evaluates multiple interacting drivers of biodiversity, incorporates anthropogenic proxies such as ALAN, and explicitly tests the robustness of results across spatial scales. 
 
-The novelty of this work lies in its fully integrated, multi-source analytical framework, which combines satellite-derived environmental indicators, climate reanalysis data, air pollution metrics, and large-scale citizen-science observations into a single harmonized dataset. Unlike prior studies that focus on isolated variables or single-scale analyses, this research simultaneously evaluates multiple interacting drivers of biodiversity, incorporates anthropogenic proxies such as ALAN, and explicitly tests the robustness of results across spatial scales.
-
-While citizen-science data introduce known sampling biases, this study incorporates spatial thinning and grid-based aggregation to ensure that inferred patterns reflect ecological signals rather than observation density. The focus is therefore not only on identifying associations but also on producing reliable, comparable biodiversity estimates under real-world data constraints.
+Although citizen-science data introduce known sampling biases, this study incorporates spatial thinning and grid-based aggregation to ensure that the inferred patterns reflect ecological signals rather than observation density. Consequently, the focus is on both identifying associations and producing reliable, comparable biodiversity estimates under real-world data constraints. 
 
 Overall, this study aims to provide a comprehensive, scalable, and reproducible assessment of bird diversity patterns in Sri Lanka, identify key environmental and anthropogenic drivers, and evaluate the stability of these relationships across spatial scales. The findings contribute to both methodological advancements in biodiversity analysis using integrated data sources and practical insights for conservation planning in data-limited regions.
+%
+\hf{https://huggingface.co/datasets/DilushaChandrasiri/SriLanka-Bird-Diversity-Dataset}{Data} and \gh{https://github.com/bird-diversity/bird_diversity_project.git}{code} for this work are publicly available.
 
 \section{Literature Review}
-Research on bird diversity has progressively shifted from single-factor ecological explanations toward multi-source, data-driven approaches. However, there remains a divide in how different drivers of biodiversity are studied and interpreted. Broadly, existing work can be grouped into three strands: studies emphasizing environmental productivity and climate \cite{pettorelli2005}, studies focusing on habitat structure \cite{sharma2023}, and studies examining anthropogenic impacts \cite{gaston2013}.
+Research on bird diversity has progressively shifted from single-factor ecological explanations toward multi-source, data-driven approaches \cite{ref20,ref21}. However, there remains a divide in how different drivers of biodiversity are studied and interpreted. 
+Broadly, existing work can be grouped into three strands:
 
-More recent work attempts to integrate multiple data sources, combining remote sensing with citizen-science observations to improve spatial coverage and predictive modelling \cite{teng2023}. These approaches demonstrate the feasibility of large-scale biodiversity assessment but often prioritize prediction accuracy over ecological interpretation. In particular, they tend to emphasize species distribution modelling rather than explicitly comparing the relative contributions of different drivers or examining community-level outcomes such as diversity and homogenization \cite{akande2025}.
+\begin{itemize}
+    \item Studies emphasizing environmental productivity and climate \cite{ref4,ref7,ref1}
+    \item Studies focusing on habitat structure and land-cover effects \cite{ref8,ref10,ref16}
+    \item Studies examining anthropogenic impacts such as urbanization and light pollution \cite{ref12,ref13,ref15}
+\end{itemize}
 
-Across these strands, two important limitations persist. First, there is a lack of direct comparative analysis across variable types; few studies systematically evaluate whether habitat structure, environmental conditions, or anthropogenic factors are the dominant drivers when considered together \cite{ribeiro2019}. Second, spatial scale is rarely treated as a variable of interest, despite evidence that ecological relationships can change depending on the resolution of analysis \cite{pettorelli2005}. This limits the generalizability and robustness of many findings.
+More recent work attempts to integrate multiple data sources, combining remote sensing with citizen-science observations to improve spatial coverage and predictive modelling~\cite{ref5}. These approaches demonstrate the feasibility of large-scale biodiversity assessment but often prioritize prediction accuracy over ecological interpretation. In particular, they tend to emphasize species distribution modelling rather than explicitly comparing the relative contributions of different drivers or examining community-level outcomes such as diversity and homogenization \cite{ref6}.
 
-This study differs from prior work by explicitly addressing these limitations through a unified analytical framework that compares multiple classes of drivers, environmental, structural, and anthropogenic, within the same modelling pipeline. In addition, it incorporates a multi-scale perspective to test whether observed relationships are consistent across spatial resolutions, and extends beyond richness to include community-level patterns such as dominance and compositional turnover \cite{mccain2009,blair1996}.
+Across these strands, two important limitations persist. First, there is a lack of direct comparative analysis across variable types; few studies systematically evaluate whether habitat structure, environmental conditions, or anthropogenic factors are the dominant drivers when considered together~\cite{ref2}. Second, spatial scale is rarely treated as a variable of interest, despite evidence that ecological relationships can change depending on the resolution of analysis \cite{ref4}. This limits the generalizability and robustness of many findings. 
+
+This study differs from prior work by explicitly addressing these limitations through a unified analytical framework that compares multiple classes of drivers, environmental, structural, and anthropogenic, within the same modelling pipeline. In addition, it incorporates a multi-scale perspective to test whether observed relationships are consistent across spatial resolutions, and extends beyond richness to include community-level patterns such as dominance and compositional turnover \cite{ref14,ref16}. 
 
 Accordingly, this literature motivates the central objective of this paper: to systematically evaluate and compare the influence of environmental conditions, habitat structure, and human activity on bird diversity in Sri Lanka, while assessing the robustness of these relationships across spatial scales.
 
-\section{Methodology}
-\subsection{Study Area and Data Sources}
-Sri Lanka was selected as the study area due to its exceptional ecological diversity concentrated within a small geographic extent, encompassing tropical lowland rainforests, montane cloud forests, dry-zone scrublands, and coastal wetlands \cite{hunt2023}. Bird occurrence records were obtained from the Global Biodiversity Information Facility (GBIF) via the eBird citizen-science platform \cite{sullivan2014}, covering the period 2014--2024. Environmental datasets include MODIS-derived NDVI and IGBP land-cover classification (17 classes), VIIRS nighttime light radiance as a proxy for urbanization \cite{elvidge2017}, MERRA-2 reanalysis variables for climate and aerosol optical properties, and SRTM elevation data. To construct the final analytical dataset, bird occurrences were merged with environmental and climatic variables by matching geographic coordinates and the month of observation.
 
+
+\section{Methodology}
+
+\subsection{Study Area and Data Sources}
+
+Sri Lanka was selected as the study area due to its exceptional ecological diversity concentrated within a small geographic extent, encompassing tropical lowland rainforests, montane cloud forests, dry-zone scrublands, and coastal wetlands \cite{ref1}. Bird occurrence records were obtained from the Global Biodiversity Information Facility (GBIF) via the eBird citizen-science platform \cite{ref9}, covering the period 2014 - 2024. Environmental datasets include MODIS-derived NDVI and IGBP land-cover classification (17 classes), VIIRS nighttime light radiance as a proxy for urbanization \cite{ref11}, MERRA-2 reanalysis variables for climate and aerosol optical properties, and SRTM elevation data. To construct the final analytical dataset, bird occurrences were merged with environmental and climatic variables by matching geographic coordinates and the month of observation. 
 To resolve spatial and temporal mismatches across these multimodal datasets, dynamic environmental features were assigned based on the observation month. Crucially, before modelling, continuous environmental covariates were averaged within spatial grid cells, and categorical variables (like land cover) were assigned their modal class within that cell. This ensured that biological point-occurrences were matched to the broader environmental baseline of their immediate habitat.
 
-\subsection{Data Preprocessing and Bias Correction}
-Incomplete, duplicate, and unreliable records were removed before analysis. Continuous variables were assessed for distributional skewness: NDVI and ALAN were normalized using a Yeo-Johnson power transformation, while bird abundance was log-transformed for bivariate analyses. Records where the cloud-free coverage band equaled zero were excluded \cite{elvidge2021}.
 
-To mitigate observer bias inherent in citizen-science data, a rigorous grid-based spatial thinning approach was applied. Specifically, the algorithm retained exactly one observation per species, per grid cell, per district (stateProvince). A 5 km grid resolution was chosen as the primary analytical baseline. To justify this key spatial choice, a formal sensitivity analysis was executed comparing 2 km, 5 km, and 10 km grid resolutions. The analysis confirmed that while coarser grids sharply reduce the total retained rows, the island-wide species count and the relative district-level richness gradients remain highly stable across all three scales, proving the spatial patterns are robust to the choice of grid size. Furthermore, thinning was explicitly executed within district boundaries rather than island-wide to allow for valid presence-based district comparisons (such as beta-diversity turnover), ensuring that island-wide aggregation did not accidentally erase unique species occurrences near administrative borders.
+
+\subsection{Data Preprocessing and Bias Correction}
+
+Incomplete, duplicate, and unreliable records were removed before the analysis. Continuous variables were assessed for distributional skewness: NDVI and ALAN were normalized using a Yeo-Johnson power transformation \cite{ref22}, while bird abundance was log-transformed for bivariate analyses. Records where the cloud-free coverage band equaled zero were excluded \cite{ref3}. 
+
+To mitigate observer bias inherent in citizen-science data, a rigorous grid-based spatial thinning approach was applied. Specifically, the algorithm retained exactly one observation per species, per grid cell, per district. A 5 km grid resolution was chosen as the primary analytical baseline. To rigorously justify this key spatial choice, a formal sensitivity analysis was executed comparing 2 km, 5 km, and 10 km grid resolutions. The analysis confirmed that while coarser grids sharply reduce the total retained rows, the island-wide species count and the relative district-level richness gradients remain highly stable across all three scales, proving the spatial patterns are robust to the choice of grid size. Furthermore, thinning was explicitly executed within district boundaries rather than island-wide to allow for valid presence-based district comparisons (such as beta-diversity turnover), ensuring that island-wide aggregation did not accidentally erase unique species occurrences near administrative borders.
 
 \subsection{Diversity Metrics and Spatial Aggregation}
-Bird diversity was quantified using multiple approaches. Species richness was strictly defined as the discrete count of unique species observed at the cell level after spatial thinning. This was complemented by presence-based species occupancy (the fraction of thinned grid cells where a species was detected within a district), pairwise Jaccard dissimilarity to measure beta-diversity turnover between districts, and relative dominance metrics calculated from district-level summed counts.
 
-To guarantee that district richness comparisons were fair despite highly uneven sampling effort across regions, an equal-cell rarefaction algorithm was applied \cite{gotelli2001}. A threshold of 300 random subsamples was chosen as the optimal iteration count to stabilize the asymptotic median and 95\% confidence intervals, effectively smoothing the variance caused by differing grid-cell sampling depths.
+Bird diversity was quantified using multiple approaches. Species richness was strictly defined as the discrete count of unique species observed at the cell-level after spatial thinning. This was complemented by presence-based species occupancy (the fraction of thinned grid cells where a species was detected within a district), pairwise Jaccard dissimilarity \cite{ref26} to measure beta-diversity turnover between districts, and relative dominance metrics calculated from district-level summed counts. 
+
+To guarantee that district richness comparisons were fair despite highly uneven sampling effort across regions, an equal-cell rarefaction algorithm was applied \cite{ref17}. A threshold of 300 random subsamples was chosen as the optimal iteration count to stabilize the asymptotic median and 95\% confidence intervals, effectively smoothing the variance caused by differing grid-cell sampling depths.
+
 
 \subsection{Environmental and Anthropogenic Analysis}
-NDVI distributions across land-cover classes were examined using violin plots. Because biological count data heavily violate normality assumptions, non-parametric Kruskal--Wallis H-tests were used to evaluate whether bird counts significantly differed across land-cover categories. ALAN was used as a proxy for urbanization \cite{elvidge2017}; its associations with MERRA-2 aerosol variables were evaluated using Pearson correlations, while LOWESS regression captured non-linear habitat degradation against NDVI. To control for false positives when screening species-environment correlations, a False Discovery Rate (FDR) correction was applied.
+NDVI distributions across land-cover classes were examined using violin plots. Because biological count data heavily violate normality assumptions~\cite{ref17}, non-parametric Kruskal--Wallis H-tests~\cite{ref23} were used to evaluate whether bird counts significantly differed across land-cover categories. ALAN was used as a proxy for urbanization \cite{ref11}; its associations with MERRA-2 aerosol variables were evaluated using Pearson correlations, while LOWESS regression captured non-linear habitat degradation against NDVI. To control for false positives when screening species-environment correlations, a False Discovery Rate (FDR) correction was applied.
+%
+Because biological count data heavily violate normality assumptions~\cite{ref17}, non-parametric Kruskal--Wallis H-tests~\cite{ref23} were used
 
-\subsection{Statistical Modelling of Bird Richness Drivers}
+\subsection{Statistical Modelling and Temporal Analysis}
+
 To evaluate drivers of cell-level bird richness, joint multivariate analyses were conducted combining air pollution metrics, elevation, NDVI, land cover, and a joint weather array (simultaneously modeling mean temperature, rainfall, wind speed, humidity, and shortwave radiation to capture synergistic climate effects rather than testing them in isolation). A Poisson Generalized Linear Model (GLM) with a log link was utilized as the primary modelling framework.
 
-Because ecological count data frequently exhibit overdispersion (violating the strict Poisson assumption where mean equals variance), robust (heteroskedasticity-consistent, HC1) standard errors were explicitly specified in the model \cite{white1980}. This adjustment ensures that the standard errors and corresponding p-values remain valid even if the underlying distributional assumptions of the Poisson model are mildly violated by heteroskedasticity. While this approach robustly handles variance assumptions, it is acknowledged as a limitation that spatial dependence (spatial autocorrelation) was not explicitly modelled via spatial autoregressive weights, rendering these GLM outputs as associative summaries rather than causal diagnostics.
+ Because ecological count data frequently exhibit overdispersion (violating the strict Poisson assumption where mean equals variance), robust (heteroskedasticity-consistent, HC1) standard errors were explicitly specified in the model \cite{ref19}. This adjustment ensures that the standard errors and corresponding p-values remain valid even if the underlying distributional assumptions of the Poisson model are mildly violated by heteroskedasticity. While this approach robustly handles variance assumptions, it is acknowledged as a limitation that spatial dependence (spatial autocorrelation) was not explicitly modelled via spatial autoregressive weights, rendering these GLM outputs as associative summaries rather than causal diagnostics.
+
 
 \subsection{Temporal Analysis}
-To systematically assess temporal shifts independently of spatial variables and the severe raw-count bias introduced by exponentially increasing observer effort over time, a strictly effort-corrected temporal analysis framework was implemented. Raw observation totals were avoided in favor of three standardized metrics:
+
+To systematically assess temporal shifts independently of spatial variables and the severe raw-count bias introduced by exponentially increasing observer effort over time, a strictly effort-corrected temporal analysis framework was implemented. Raw observation totals were avoided in favor of three standardized metrics.
+
 \begin{itemize}
     \item Rarefied annual richness, which mathematically forces the identical number of sampled grid cells to be evaluated for each year.
     \item District-year richness normalized per 100 sampled cells.
-    \item Temporal species occupancy rates calculated exclusively on a stable panel of grid cells defined as cells repeatedly surveyed across a majority of the study years.
+    \item Temporal species occupancy rates calculated exclusively on a "stable panel" of grid cells defined as cells repeatedly surveyed across a majority of the study years. 
 \end{itemize}
+Species-specific temporal trends were then estimated using log-linear regression models fitted to these effort-corrected trajectories. To account for multiple testing across hundreds of species, the Benjamini-Hochberg FDR correction \cite{ref18} was applied to all temporal trend slopes. While these methods rigorously quantify statistical trends, the unstructured nature of citizen-science data means these slopes represent highly controlled apparent observation trends rather than confirmed absolute population dynamics.
 
-Species-specific temporal trends were then estimated using log-linear regression models fitted to these effort-corrected trajectories. To account for multiple testing across hundreds of species, the Benjamini-Hochberg FDR correction was applied to all temporal trend slopes \cite{benjamini1995}. While these methods rigorously quantify statistical trends, the unstructured nature of citizen-science data means these slopes represent highly controlled apparent observation trends rather than confirmed absolute population dynamics.
+\section{EXPERIMENTS AND RESULTS}
 
-\section{Experiments and Results}
 All diversity metrics are computed at the grid-cell level, where species richness represents the number of unique species observed per cell after spatial thinning.
 
 \subsection{Dataset Overview and Spatial Thinning}
+
 After cleaning and integration, the final dataset contained approximately 1.55 million records spanning 25 administrative districts and 429 bird species. Occurrence records were strongly clustered in western and southern coastal areas (55.988\%), with the central (26.458\%), northern (15.741\%), and eastern (1.8\%) regions markedly underrepresented, confirming the need for spatial thinning before richness comparisons. After thinning at 5 km resolution, island-wide species count remained stable at 429 across all grid resolutions tested (2 km, 5 km, 10 km), with a mean cell-level richness of 243.64 species per cell, indicating that district-level summaries are robust to the choice of thinning scale.
 
-\subsection{Effects of Habitat and Environmental Variables}
-Dual-axis time-series analysis confirmed that NDVI peaks lag behind the onset of monsoon rainfall, consistent with vegetation green-up following precipitation pulses.
 
-\begin{figure}[!t]
-\centering
-\fbox{\parbox[c][4.0cm][c]{0.9\linewidth}{\centering Figure placeholder \\ NDVI distribution by IGBP land-cover class}}
-\caption{Distribution of NDVI partitioned by IGBP land-cover classifications, highlighting the stability of evergreen habitats versus the volatility of croplands.}
-\label{fig:ndvi_landcover}
+\subsection{Effects of Habitat and Environmental Variables}
+Dual-axis time-series analysis at the national scale confirmed that NDVI peaks lag behind seasonal rainfall onset, consistent with vegetation green-up following precipitation pulses.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{violin.png}
+    \caption{Distribution of NDVI partitioned by IGBP Land Cover classifications, highlighting the stability of evergreen habitats versus the volatility of croplands.}
+    \label{fig:NDVI}
 \end{figure}
 
-Violin plots of NDVI across IGBP land-cover classes revealed strong habitat partitioning. However, only classes with sufficient observations are visualized, resulting in a subset of the full 17-category scheme being displayed. Evergreen forests maintained high and stable NDVI, whereas croplands exhibited pronounced variability (Fig.~\ref{fig:ndvi_landcover}). A Kruskal--Wallis test confirmed highly significant differences in avian distributions across land-cover categories ($H > 1000$, $p < 0.001$), with natural habitats, particularly evergreen forests and woody savannas, supporting substantially higher and more stable bird records than human-altered landscapes.
-
-Temperature also varied significantly among districts (Kruskal--Wallis, $p \approx 0$). In contrast, correlations between NDVI and raw observation counts were negligible (Pearson $r = -0.022$; Spearman $\rho = -0.094$), and richness showed only weak positive associations with NDVI ($\rho = 0.033$), despite statistically significant p-values driven by large sample size. Land-cover class emerged as a stronger predictor, with Kruskal--Wallis tests for richness and Shannon diversity confirming that categorical habitat type dominates over continuous greenness measures.
+Violin plots of NDVI across IGBP land-cover classes shown in Fig~\ref{fig:NDVI} revealed strong habitat partitioning. However, only classes with sufficient observations are visualized, resulting in a subset of the full 17-category scheme being displayed. Evergreen forests maintained high and stable NDVI, whereas croplands exhibited pronounced variability (Fig.~1). A Kruskal--Wallis test confirmed highly significant differences in avian records across land-cover categories ($H > 1000$, $p < 0.001$), with natural habitats, particularly evergreen forests and woody savannas, supporting substantially higher and more stable bird records than human-altered landscapes. Temperature also varied significantly among districts (Kruskal--Wallis, $p \approx 0$). In contrast, correlations between NDVI and raw observation counts were negligible (Pearson $r = -0.022$; Spearman $\rho = -0.094$), and richness showed only weak positive associations with NDVI ($\rho = 0.033$), despite statistically significant $p$-values driven by large sample size. The land-cover class emerged as a stronger predictor, with Kruskal-Wallis tests for richness and Shannon diversity \cite{ref24} confirming that categorical habitat type dominates over continuous greenness measures.
 
 \subsection{Effects of Urbanization and Pollution}
-Urbanization, represented by ALAN, showed complex and scale-dependent relationships with biodiversity. A strong positive correlation between ALAN and aerosol variables confirms the co-location of human activity, infrastructure, and pollution. The relationship between ALAN and vegetation (NDVI) shows a clear negative trend, indicating reduced habitat quality with increasing urban intensity (Fig.~\ref{fig:alan_ndvi}).
 
-\begin{figure}[!t]
-\centering
-\fbox{\parbox[c][4.0cm][c]{0.9\linewidth}{\centering Figure placeholder \\ LOWESS ALAN vs NDVI}}
-\caption{LOWESS regression demonstrating the steep decline in vegetation density (NDVI) as Artificial Light At Night (ALAN) increases, indicating progressive urban habitat degradation.}
-\label{fig:alan_ndvi}
+Urbanization, represented by ALAN, showed complex and scale-dependent relationships with biodiversity. A strong positive correlation between ALAN and aerosol variables confirms the co-location of human activity, infrastructure, and pollution. The relationship between ALAN and vegetation (NDVI) shows a clear negative trend, indicating reduced habitat quality with increasing urban intensity (Fig.2). However, bird responses to urbanization are not uniform. While highly illuminated areas exhibited high total bird counts, further analysis revealed that these counts are dominated by a small number of species (Fig. 3), as reflected in:
+\begin{itemize}
+    \item reduced Shannon diversity (lower evenness),
+    \item increased Berger-Parker dominance index \cite{ref25}.  
+    \item lower compositional turnover (Jaccard dissimilarity \cite{ref26}) between highly urbanized cells.
+\end{itemize}
+Together, these metrics provide direct evidence of biotic homogenization, where urban environments support large populations of a few adaptable (synanthropic) species while reducing overall diversity and ecological complexity. This strengthens the interpretation beyond visual patterns by linking the claim explicitly to quantitative diversity measures. Pollution variables showed negligible global correlations with overall richness, but species-level analysis revealed strong associations for specific taxa, indicating heterogeneous sensitivity rather than uniform effects.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{grey.png}
+    \caption{LOWESS regression demonstrating the steep decline in vegetation density (NDVI) as Artificial Light At Night (ALAN) increases, indicating progressive urban habitat degradation.}
+    \label{fig:LOWESS}
 \end{figure}
 
-However, bird responses to urbanization are not uniform. While highly illuminated areas exhibited high total bird counts, further analysis revealed that these counts are dominated by a small number of species (Fig.~\ref{fig:hexbin_alan_counts}), as reflected in reduced Shannon diversity (lower evenness), increased Berger-Parker dominance index, and lower compositional turnover (Jaccard dissimilarity) between highly urbanized cells.
+LOWESS regression confirmed a steep decline in NDVI with rising ALAN (Fig~\ref{fig:LOWESS})~\cite{ref12}. Across all records, correlations between bird counts and aerosol variables were negligible ($|r| \approx 0.01$); however, species-level analysis revealed strong taxon-specific responses (e.g., \textit{Merops persicus} $|\rho| \approx 0.736$ with several pollutant metrics), illustrating that pollution effects are heterogeneous rather than uniform~\cite{ref14}.
 
-Together, these metrics provide direct evidence of biotic homogenization, where urban environments support large populations of a few adaptable (synanthropic) species while reducing overall diversity and ecological complexity. Pollution variables showed negligible global correlations with overall richness, but species-level analysis revealed strong associations for specific taxa, indicating heterogeneous sensitivity rather than uniform effects.
-
-LOWESS regression confirmed a steep decline in NDVI with rising ALAN (Fig.~\ref{fig:alan_ndvi}) \cite{gaston2013}. Across all records, correlations between bird counts and aerosol variables were negligible ($|r| \approx 0.01$); however, species-level analysis revealed strong taxon-specific responses (e.g., \textit{Merops persicus}, $|\rho| \approx 0.736$ with several pollutant metrics), illustrating that pollution effects are heterogeneous rather than uniform \cite{mcgill2007}.
-
-\begin{figure}[!t]
-\centering
-\fbox{\parbox[c][4.0cm][c]{0.9\linewidth}{\centering Figure placeholder \\ Hexbin ALAN vs bird counts}}
-\caption{Hexbin density plot showing the urban congregation effect, where highly lit areas support exceptionally large bird flocks while rural areas show moderate counts.}
-\label{fig:hexbin_alan_counts}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{hexbin.png}
+    \caption{Hexbin density plot showing the urban congregation effect, where highly-lit areas support exceptionally large bird flocks while rural areas show moderate counts.}
+    \label{fig:Hexbin}
 \end{figure}
 
-The hexbin density plot confirms a dual role for ALAN: highly lit areas support high abundances of a few synanthropic species while overall richness and evenness are reduced, consistent with biotic homogenization along urban gradients \cite{blair1996}.
+The hexbin density plot in Fig~\ref{fig:Hexbin} confirms a dual role for ALAN: highly lit areas support high abundances of a few synanthropic species while overall richness and evenness are reduced consistent with biotic homogenization along urban gradients~\cite{ref15}. This pattern suggests that artificial lighting acts as an ecological filter, favoring generalist and human-adapted taxa while excluding light-sensitive or habitat-specialist species. The concentration of large counts within high-radiance bins indicates aggregation behavior, likely driven by increased resource availability (e.g., insects attracted to light sources) and reduced predation pressure in urban settings. Conversely, low-light regions exhibit more moderate abundances distributed across a wider range of observations, reflecting more balanced community structures. These findings highlight that ALAN does not uniformly increase biodiversity, but instead redistributes it, amplifying dominance patterns and reducing community complexity.
 
 \subsection{Multivariate Modelling of Species Richness}
-The Spearman correlation matrix revealed complex multicollinearity: elevation correlated strongly and negatively with temperature ($\rho \approx -0.85$), and precipitation showed a positive association with NDVI. Bivariate correlations with raw bird abundance were statistically significant ($p < 0.001$) but ecologically negligible ($\rho < 0.2$), reflecting the large-sample effect in crowd-sourced data.
 
-Among OLS models, the specification including NDVI and land-cover terms showed the strongest fit (Spearman $r = 0.150$, $p = 7.28\times10^{-10}$), outperforming climate-only ($R^2 = 0.008$) and aerosol-only ($R^2 = 0.011$) models. The Poisson GLM achieved a Cox-Snell pseudo $R^2 \approx 0.804$ (training-sample fit). Key significant predictors were NDVI (negative, $p \approx 0.047$), nighttime radiance (positive, $p \approx 0.002$), mean temperature (negative, $p \approx 0.002$), and several land-cover contrasts. Elevation, rainfall, and aerosol extinction were not significant. All results are associative, not causal.
+As shown in fig~\ref{fig:Spearman} Spearman correlation matrix revealed complex multicollinearity: elevation correlated strongly and negatively with temperature ($\rho \approx -0.85$), and precipitation showed a positive association with NDVI. Bivariate correlations with raw bird abundance were statistically significant ($p < 0.001$) but ecologically negligible ($\rho < 0.2$), reflecting the large-sample effect in crowd-sourced data. Among OLS models, the specification including NDVI and land-cover terms showed the strongest fit (Spearman $r = 0.150$, $p = 7.28 \times 10^{-10}$), outperforming climate-only ($R^2 = 0.008$) and aerosol-only ($R^2 = 0.011$) models. The Poisson GLM achieved a Cox--Snell pseudo $R^2 \approx 0.804$ (training-sample fit). Key significant predictors were NDVI (negative, $p \approx 0.047$), nighttime radiance (positive, $p \approx 0.002$), mean temperature (negative, $p \approx 0.002$), and several land-cover contrasts. Elevation, rainfall, and aerosol extinction were not significant. All results are associative, not causal.
 
-\begin{figure}[!t]
-\centering
-\fbox{\parbox[c][4.0cm][c]{0.9\linewidth}{\centering Figure placeholder \\ Spearman correlation heatmap}}
-\caption{Spearman rank correlation matrix of continuous environmental variables and biological metrics, revealing multicollinearity patterns among predictors.}
-\label{fig:corr_matrix}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{heatmap.png}
+    \caption{Spearman rank correlation matrix of continuous environmental variables and biological metrics, revealing multicollinearity patterns among predictors.}
+    \label{fig:Spearman}
 \end{figure}
 
 \subsection{Temporal and Regional Diversity Patterns}
-Monthly species richness and Shannon diversity showed strong seasonality, with higher richness in January--March and November--December and lower Shannon diversity during the late monsoon season. Cross-correlation analysis indicated richness aligns more clearly when rainfall leads by several months, consistent with a delayed ecological response through vegetation dynamics \cite{pettorelli2005}. Effort-corrected rarefied richness and district-year occupancy rates confirmed that temporal trends are not driven purely by sampling variation.
+Monthly species richness and Shannon diversity \cite{ref24} showed strong seasonality, with higher richness in January-March and November-December and lower Shannon diversity during the late monsoon season. Cross-correlation analysis indicated richness aligns more clearly when rainfall leads by several months, consistent with a delayed ecological response through vegetation dynamics \cite{ref4}. Effort-corrected rarefied richness and district-year occupancy rates confirmed that temporal trends are not driven purely by sampling variation. 
 
-Regional comparisons based on pairwise Jaccard dissimilarity revealed substantial compositional turnover across districts, indicating that bird communities differ meaningfully in structure across the island. Species-specific log-linear abundance trends with Benjamini-Hochberg FDR correction confirmed that diversity changes are not uniform across taxa or regions \cite{mccain2009}.
+As demonstrated in Fig.~\ref{fig:district_richness}, standardizing richness per 100 sampled cells to account for exponentially increasing observer effort reveals a stabilizing or gradually declining trend in relative richness across most top-sampled districts over the past decade. This observed degradation in effort-standardized richness over time aligns with the biotic homogenization and habitat degradation patterns identified in Section IV-C, suggesting that ongoing anthropogenic pressures, land-use changes, and urbanization are actively suppressing overall avian complexity across these districts.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\linewidth]{district_richness_effort.png}
+    \caption{District annual richness standardized by effort (per 100 sampled cells) from 2014 to 2024. After correcting for expanding observer effort, underlying biodiversity trends show a general decline or plateau across the most heavily sampled districts.}
+    \label{fig:district_richness}
+\end{figure}
+
+Regional comparisons based on pairwise Jaccard dissimilarity revealed substantial compositional turnover across districts, indicating that bird communities differ meaningfully in structure across the island. Species-specific log-linear abundance trends with Benjamini-Hochberg FDR correction \cite{ref16} confirmed that diversity changes are not uniform across taxa or regions.
 
 \section{Discussion}
-A central finding of this study is the relatively weak association between individual continuous variables (NDVI, temperature, air pollution) and bird species richness in isolation. Despite statistically significant p-values attributable to the large sample size, effect sizes were ecologically small \cite{hunt2023,ribeiro2019}. Categorical habitat structure, particularly IGBP land-cover class, emerged as a much stronger determinant, with natural ecosystems such as evergreen forests and woody savannas consistently supporting higher and more stable species richness than human-modified landscapes \cite{sharma2023}. NDVI showed stronger explanatory power when combined with land-cover type, reinforcing that habitat quality is multidimensional and encompasses structure, composition, and disturbance regime, not productivity alone \cite{pettorelli2005,donald2001}.
 
-Anthropogenic influences exhibited nuanced scale-dependent effects. ALAN, used as a proxy for urban intensity, showed a dual role: weak positive associations with richness at fine scales likely reflect increased observer effort in accessible urban areas, while deeper analysis confirmed biotic homogenization, disproportionately high abundances of a few adaptable species alongside reduced overall richness and evenness \cite{mckinney2002,blair1996}. Air pollution had minimal global effects but strong taxon-specific associations, suggesting that sensitivity depends on species traits such as ecological tolerance and feeding ecology \cite{gaston2013,mcgill2007}.
+A central finding of this study is the relatively weak association between individual continuous variables (NDVI, temperature, air pollution) and bird species richness in isolation. Despite statistically significant p-values attributable to the large sample size, effect sizes were ecologically small~\cite{ref1,ref2}. Categorical habitat structure - particularly IGBP land-cover class emerged as a much stronger determinant, with natural ecosystems such as evergreen forests and woody savannas consistently supporting higher and more stable species richness than human-modified landscapes~\cite{ref8}. NDVI showed stronger explanatory power when combined with land- cover type, reinforcing that habitat quality is multidimensional and encompasses structure, composition, and disturbance regime, not productivity alone~\cite{ref4,ref10}. 
 
-Spatially, thinning and grid-based aggregation were essential for mitigating citizen-science sampling bias \cite{sullivan2014}. Richness summaries were stable across grid resolutions (2 km, 5 km, 10 km), strengthening confidence in observed spatial patterns. The Poisson GLM improved explanatory power over bivariate OLS approaches, and the use of robust standard errors reflects careful treatment of count data. Nevertheless, the study remains observational and associative; detection probability is not explicitly modelled, limiting inferential strength regarding true species distributions.
+Anthropogenic influences exhibited nuanced scale-dependent effects. ALAN, used as a proxy for urban intensity, showed a dual role: weak positive associations with richness at fine scales likely reflect increased observer effort in accessible urban areas, while deeper analysis confirmed biotic homogenization, disproportionately high abundances of a few adaptable species alongside reduced overall richness and evenness~\cite{ref13,ref15}. Air pollution had minimal global effects but strong taxon- specific associations, suggesting that sensitivity depends on species traits such as ecological tolerance and feeding ecology~\cite{ref12,ref14}. 
 
-For conservation, the dominant role of land cover suggests that protecting and restoring evergreen forests and woody savannas will yield the greatest benefits for avian diversity. Substantial beta diversity across districts indicates that strategies should be region-specific rather than island-wide uniform policies \cite{mccain2009}. The integrated multi-source approach demonstrated here is scalable, reproducible, and adaptable to other taxa and geographies, supporting environmental monitoring under data-limited conditions.
+Spatially, thinning and grid-based aggregation were essential for mitigating citizen-science sampling bias~\cite{ref9}. Richness summaries were stable across grid resolutions (2 km, 5 km, 10 km), strengthening confidence in observed spatial patterns. The Poisson GLM improved explanatory power over bivariate OLS approaches, and the use of robust standard errors reflects careful treatment of count data. Nevertheless, the study remains observational and associative; detection probability is not explicitly modelled, limiting inferential strength regarding true species distributions. 
+
+For conservation, the dominant role of land cover suggests that protecting and restoring evergreen forests and woody savannas will yield the greatest benefits for avian diversity. Substantial beta diversity across districts indicates that strategies should be region-specific rather than island-wide uniform policies~\cite{ref16}. The integrated multi-source approach demonstrated here is scalable, reproducible, and adaptable to other taxa and geographies, supporting environmental monitoring under data-limited conditions.
 
 \section{Conclusion}
-This study presented an integrated, data-driven assessment of bird diversity across Sri Lanka by combining large-scale citizen-science occurrence records with satellite-derived environmental variables, climate data, air pollution indicators, and anthropogenic proxies. The findings demonstrate that bird diversity is governed by the interaction of multiple factors, with habitat structure (land-cover type) consistently showing stronger associations with species richness than individual continuous variables, while urbanization captured by ALAN promotes biotic homogenization by supporting a few generalist species at the expense of overall richness and evenness.
 
-Spatial thinning, grid-based aggregation, and effort-corrected temporal metrics proved essential for reliable biodiversity estimation from opportunistic data, and this reproducible framework offers a strong foundation for conservation prioritization, environmental monitoring, and future development of more predictive biodiversity models across tropical island systems.
+This study presented an integrated, data-driven assessment of bird diversity across Sri Lanka by combining large-scale citizen-science occurrence records with satellite-derived environmental variables, climate data, air pollution indicators, and anthropogenic proxies. The findings demonstrate that bird diversity is governed by the interaction of multiple factors, with habitat structure (land-cover type) consistently showing stronger associations with species richness than individual continuous variables, while urbanization captured by ALAN promotes biotic homogenization by supporting a few generalist species at the expense of overall richness and evenness. Spatial thinning, grid-based aggregation, and effort-corrected temporal metrics proved essential for reliable biodiversity estimation from opportunistic data, and this reproducible framework offers a strong foundation for conservation prioritization, environmental monitoring, and future development of more predictive biodiversity models across tropical island systems.
 
-\section*{Acknowledgements}
+\section{Acknowledgments}
 The authors acknowledge the Global Biodiversity Information Facility (GBIF) for providing open-access bird occurrence data, and eBird for the citizen-science observation platform. Environmental data were sourced from MODIS, MERRA-2, VIIRS, and SRTM satellite and reanalysis products. The authors also thank the scientific community whose open-source tools and published methodologies informed the analytical framework of this study.
 
-\begin{thebibliography}{99}
-
-\bibitem{hunt2023}
-M. L. Hunt, G. A. Blackburn, G. M. Siriwardena, and C. S. Rowland,
-"Using satellite data to assess spatial drivers of bird diversity,"
-\textit{Remote Sens. Ecol. Conserv.}, vol. 9, no. 4, pp. 483--500, 2023,
-doi: 10.1002/rse2.322.
-
-\bibitem{ribeiro2019}
-I. Ribeiro, V. Proenca, P. Serra, J. Palma, C. Domingo-Marimon, X. Pons, and T. Domingos,
-"Remotely sensed indicators and open-access biodiversity data to assess bird diversity patterns in Mediterranean rural landscapes,"
-\textit{Sci. Rep.}, vol. 9, art. 6826, 2019, doi: 10.1038/s41598-019-43330-3.
-
-\bibitem{elvidge2021}
-C. D. Elvidge, M. Zhizhin, T. Ghosh, F.-C. Hsu, and J. Taneja,
-"Annual Time Series of Global VIIRS Nighttime Lights Derived from Monthly Averages: 2012 to 2019,"
-\textit{Remote Sensing}, vol. 13, no. 5, art. 922, 2021,
-doi: 10.3390/rs13050922.
-
-\bibitem{pettorelli2005}
-N. Pettorelli, J. O. Vik, A. Mysterud, J.-M. Gaillard, C. Tucker, and N. C. Stenseth,
-"Using the satellite-derived NDVI to assess ecological responses to environmental change,"
-\textit{Trends Ecol. Evol.}, vol. 20, no. 9, pp. 503--510, 2005,
-doi: 10.1016/j.tree.2005.05.011.
-
-\bibitem{teng2023}
-M. Teng, E. Elmustafa, B. Akera, Y. Bengio, H. Larochelle, H. Rolnick, and M. Brandt,
-"SatBird: Bird Species Distribution Modeling with Remote Sensing and Citizen Science Data,"
-\textit{arXiv:2311.00936}, 2023. [Online]. Available: \url{https://arxiv.org/abs/2311.00936}
-
-\bibitem{akande2025}
-H. A. Akande and A. A. Gidado,
-"EcoCast: A Spatio-Temporal Model for Continual Biodiversity and Climate Risk Forecasting,"
-\textit{arXiv:2512.02260}, 2025. [Online]. Available: \url{https://arxiv.org/abs/2512.02260}
-
-\bibitem{nagendra2001}
-H. Nagendra,
-"Using remote sensing to assess biodiversity,"
-\textit{Int. J. Remote Sensing}, vol. 22, no. 12, pp. 2377--2400, 2001,
-doi: 10.1080/01431160116766.
-
-\bibitem{sharma2023}
-P. Sharma \textit{et al.},
-"Integrating field- and remote sensing data to perceive species heterogeneity across a climate gradient,"
-\textit{Sci. Rep.}, vol. 13, art. 22698, 2023, doi: 10.1038/s41598-023-50812-y.
-
-\bibitem{sullivan2014}
-B. L. Sullivan \textit{et al.},
-"The eBird enterprise: An integrated approach to development and application of citizen science,"
-\textit{Biol. Conserv.}, vol. 169, pp. 31--40, 2014,
-doi: 10.1016/j.biocon.2013.11.003.
-
-\bibitem{donald2001}
-P. F. Donald, R. E. Green, and M. F. Heath,
-"Agricultural intensification and the collapse of Europe's farmland bird populations,"
-\textit{Proc. Royal Soc. B}, vol. 268, pp. 25--29, 2001,
-doi: 10.1098/rspb.2000.1325.
-
-\bibitem{elvidge2017}
-C. D. Elvidge, K. Baugh, M. Zhizhin, F.-C. Hsu, and T. Ghosh,
-"VIIRS night-time lights,"
-\textit{Int. J. Remote Sens.}, vol. 38, no. 21, pp. 5860--5879, 2017,
-doi: 10.1080/01431161.2017.1342050.
-
-\bibitem{gaston2013}
-K. J. Gaston, J. Bennie, T. W. Davies, and J. Hopkins,
-"The ecological impacts of nighttime light pollution: A mechanistic appraisal,"
-\textit{Biol. Rev.}, vol. 88, no. 4, pp. 912--927, 2013,
-doi: 10.1111/brv.12036.
-
-\bibitem{mckinney2002}
-M. L. McKinney,
-"Urbanization, Biodiversity, and Conservation,"
-\textit{BioScience}, vol. 52, no. 10, pp. 883--890, 2002,
-doi: 10.1641/0006-3568(2002)052[0883:UBAC]2.0.CO;2.
-
-\bibitem{mcgill2007}
-B. J. McGill \textit{et al.},
-"Species abundance distributions: moving beyond single prediction theories to integration within an ecological framework,"
-\textit{Ecol. Lett.}, vol. 10, no. 10, pp. 995--1015, 2007,
-doi: 10.1111/j.1461-0248.2007.01094.x.
-
-\bibitem{blair1996}
-R. B. Blair,
-"Land Use and Avian Species Diversity Along an Urban Gradient,"
-\textit{Ecol. Appl.}, vol. 6, no. 2, pp. 506--519, 1996,
-doi: 10.2307/2269387.
-
-\bibitem{mccain2009}
-C. M. McCain,
-"Global analysis of bird elevation diversity,"
-\textit{Global Ecol. Biogeogr.}, vol. 18, no. 3, pp. 346--360, 2009,
-doi: 10.1111/j.1466-8238.2008.00443.x.
-
-\bibitem{gotelli2001}
-N. J. Gotelli and R. K. Colwell,
-"Quantifying biodiversity: procedures and pitfalls in the measurement and comparison of species richness,"
-\textit{Ecol. Lett.}, vol. 4, no. 4, pp. 379--391, 2001.
-
-\bibitem{benjamini1995}
-Y. Benjamini and Y. Hochberg,
-"Controlling the false discovery rate: a practical and powerful approach to multiple testing,"
-\textit{J. R. Stat. Soc. Ser. B}, vol. 57, no. 1, pp. 289--300, 1995.
-
-\bibitem{white1980}
-H. White,
-"A heteroskedasticity-consistent covariance matrix estimator and a direct test for heteroskedasticity,"
-\textit{Econometrica}, pp. 817--838, 1980.
-
-\end{thebibliography}
+{\footnotesize
+\bibliographystyle{IEEEtranN}
+\bibliography{references}
+}
 
 \end{document}
